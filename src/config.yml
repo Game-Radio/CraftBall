@@ -1,0 +1,18 @@
+version: 1.1
+fields:
+    -
+        name: field1
+        world: world
+        region:
+            - 314,66
+            - 330,66
+            - 330,84
+            - 314,84
+        region-y: 78
+        ball-item: 341
+        enable-kick: true
+        horizontal-kick-power: 0.8
+        vertical-kick-power: 0.1
+        enable-throw: true
+        throw-power: 0.5
+        pickup-delay: 20

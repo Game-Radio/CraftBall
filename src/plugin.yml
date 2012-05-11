@@ -1,0 +1,16 @@
+name: CraftBall
+main: jfk.CraftBall.CraftBall
+version: 1.1
+authors: [nisovin, JFK]
+softdepend: [MultiVerse-Core]
+
+commands:
+    craftball:
+        aliases: [cb]
+        permission: craftball.admin
+        description: "Interface with CraftBall configuration"
+        usage: "Only admins can use this."
+
+permissions:
+    craftball.admin:
+        default: op
