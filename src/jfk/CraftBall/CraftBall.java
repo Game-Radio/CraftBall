@@ -1,4 +1,4 @@
- /* 
+ /*
 
  * Copyright 2012 by JFK - whydontyouspamme@hotmail.com
  * Original Code by: nisovin
@@ -38,21 +38,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class CraftBall extends JavaPlugin implements CommandExecutor {
-	
+
 	protected HashSet<Field> fields = new HashSet<Field>();
-	
+
 	private boolean DEBUG = false;
 	private String TAG = "[CBall]";
-	
+
 	private Logger mclog = Logger.getLogger("Minecraft");
-	
-	
+
+
 	@Override
 	public void onEnable() {
 		new BallPlayerListener(this);
-		
+
 		loadConfig();
-		
+
 		log_info("CraftBall v" + this.getDescription().getVersion() + " enabled: " + fields.size() + " fields loaded.");
 	}
 
@@ -61,92 +61,92 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 			if (args.length != 1) {
 				sendMess("commands: '/cb reload' '/cb list'", sender);
 				return true;
-			} 
-			
-			if (args[0].toLowerCase().equals("reload")) {			
-				fields.clear(); 
+			}
+
+			if (args[0].toLowerCase().equals("reload")) {
+				fields.clear();
 				loadConfig();
 				sendMess("CraftBall config reloaded.", sender);
 				return true;
 			}
-			
+
 			if (args[0].toLowerCase().equals("list")) {
-			    for (Field f : fields) {
-			    	sendMess("-----Field: "+f.name, sender);
-			    	sendMess("-World: "+ f.world.getName(), sender);
-			    	sendMess("-Region: (x,z)", sender);
-			    	for (int i=0; i <  f.region.npoints; i++) {
-			    		sendMess("   -("+f.region.xpoints[i]+","+f.region.ypoints[i]+")", sender);
-			    	}
-			    	sendMess("-BallItem: "+f.ballItem.getType().toString(), sender);
-			   			    	
-			    }
-			    return true;
+				for (Field f : fields) {
+					sendMess("-----Field: "+f.name, sender);
+					sendMess("-World: "+ f.world.getName(), sender);
+					sendMess("-Region: (x,z)", sender);
+					for (int i=0; i <  f.region.npoints; i++) {
+						sendMess("   -("+f.region.xpoints[i]+","+f.region.ypoints[i]+")", sender);
+					}
+					sendMess("-BallItem: "+f.ballItem.getType().toString(), sender);
+
+				}
+				return true;
 			}
-			
+
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked") //for Fieldlist, can hardly go wrong and put a try/catch over it
 	public void loadConfig() {
-		
+
 		//see if datafolder exists, else copy default config.yml
 		if (!this.getDataFolder().exists()) {
 			this.saveDefaultConfig();
 		}
 		reloadConfig();
-		
+
 		if (updateConfig()) {
 			log_info("Succesfully updated config.yml");
 		}
-	    
-	    if (getConfig().get("fields") == null) {
-	       	fatal("Error no fields found in config.yml");  	
-    	    return;
-	    } 
-	    
-	    List<Map<?, ?>> fieldList = getConfig().getMapList("fields");
-	    int fieldCount = 0;
-			
+
+		if (getConfig().get("fields") == null) {
+		   	fatal("Error no fields found in config.yml");  	
+			return;
+		} 
+
+		List<Map<?, ?>> fieldList = getConfig().getMapList("fields");
+		int fieldCount = 0;
+
 		for (Map<?, ?> f : fieldList) {
 			Field field = new Field();
 			fieldCount++;
-			
+
 			if (f.get("name") == null || !(f.get("name") instanceof String)) {
 				field.name = "no_name"+fieldCount;
 			}  else {
 				field.name = (String) f.get("name");
 			}
-			
-			
+
+
 			if (f.get("world") == null || !(f.get("world") instanceof String)) {
 				log_warning("Error found in field list: world not found, using default");
 				field.world = getServer().getWorlds().get(0);
 			} else {
 				if (getServer().getWorld((String) f.get("world")) == null) {
 					log_warning("Error found in field list: world not found, using default");
-					field.world = getServer().getWorlds().get(0);					
+					field.world = getServer().getWorlds().get(0);
 				} else {
 					field.world = getServer().getWorld((String) f.get("world"));
-				}				
+				}
 			}
-						
+
 			// get region
 			List<String> points = null;
-		    //points = node.getStringList("region");
+			//points = node.getStringList("region");
 			if (f.get("region") == null || !(f.get("region") instanceof List <?>)) {
-				log_warning("Error found in field list: could not find region");			
+				log_warning("Error found in field list: could not find region");
 				continue;
 			}
-			
-			try  { 
-			    points = (List <String>) f.get("region");
+
+			try  {
+				points = (List <String>) f.get("region");
 			}
 			catch (Exception e) {
 				points = null;
 			}
-			
+
 			if (points == null) {
 				log_warning("Error found in field list: some error in region");
 				continue;
@@ -156,11 +156,11 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 				field.region.addPoint(Integer.parseInt(point[0]), Integer.parseInt(point[1]));
 			}
 			if (f.get("region-y") == null || !(f.get("region-y") instanceof Integer)) {
-				field.fieldY = 64;						
+				field.fieldY = 64;
 			} else {
 				field.fieldY = (Integer) f.get("region-y");
 			}
-			
+
 			if (f.get("field-height") == null || !(f.get("field-height") instanceof Integer)) {
 				field.fieldHeight = 4;
 			} else {
@@ -168,10 +168,10 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 			}
 
 			if (f.get("ball-item") == null || !(f.get("ball-item") instanceof String || f.get("ball-item") instanceof Integer)) {
-				log_warning("Error found in field list: could not find ball-item");			
+				log_warning("Error found in field list: could not find ball-item");
 				continue;
 			}
-						
+
 			// ball item
 			String ballItem = f.get("ball-item").toString();
 			if (ballItem.contains(":")) {
@@ -180,7 +180,7 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 			} else {
 				field.ballItem = new ItemStack(Integer.parseInt(ballItem));
 			}
-			
+
 			// kick options
 			if (f.get("enable-kick") == null || !(f.get("enable-kick") instanceof Boolean)) {
 				field.enableKick = true;
@@ -208,8 +208,8 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 				field.throwPower = 0.5;
 			} else {
 				field.throwPower = (Double) f.get("throw-power");
-			}			
-			
+			}
+
 			// misc options
 			if (f.get("enable-fire") == null || !(f.get("enable-fire") instanceof Boolean)) {
 				field.fire= false;
@@ -221,19 +221,19 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 			} else {
 				field.pickupDelay = (Integer) f.get("pickup-delay");
 			}
-			
+
 			fields.add(field);
 		}
 	}
-	
+
 	@Override
 	public void onDisable() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public boolean updateConfig() {
-		if (getConfig().getString("version", null) != null && 
+		if (getConfig().getString("version", null) != null &&
 				getDescription().getVersion().equals(getConfig().getString("version"))
 		) {
 			return false;
@@ -243,41 +243,41 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 		BufferedReader cRead;
 		FileOutputStream cOut;
 		StringBuffer cBuffer;
-		
+
 		//---readfile section
-		
-		try {			
+
+		try {
 			cFile = new File(getDataFolder()+File.separator+"config.yml");
 			cRead = new BufferedReader(new InputStreamReader(new FileInputStream(cFile), "UTF-8"));
 			cBuffer = new StringBuffer();
 			int ch;
-	        while ((ch = cRead.read()) > -1) {
-                cBuffer.append((char)ch);              
-	        }
-	        cString = cBuffer.toString();
-	        cRead.close();
+			while ((ch = cRead.read()) > -1) {
+				cBuffer.append((char)ch);
+			}
+			cString = cBuffer.toString();
+			cRead.close();
 		}
 		catch (Exception e) {
 			log_warning("Error, couldn't update/load config.yml:"+e.toString());
 			return false;
 		}
-		
+
 		if (!cFile.exists()) {
 			log_warning("Error, couldn't update config.yml, file not found.");
-			return false;			
+			return false;
 		}
 		//--- update sections:
 		oldV = getConfig().getString("version", null);
-		//before 1.1 
+		//before 1.1
 		//change list structure
 		//add world variable
 		//add name variable
 		if (oldV == null) {
 			cString = "version: 1.1\r".concat(cString);
-		    cString = cString.replaceAll("(\\s{4}(field\\d+):)", "    -\r        name: $2\r        world: "+getServer().getWorlds().get(0).getName());
-		    log_warning("Updated config.yml from version <1.1, check your world settings in config.yml!");
+			cString = cString.replaceAll("(\\s{4}(field\\d+):)", "	-\r		name: $2\r		world: "+getServer().getWorlds().get(0).getName());
+			log_warning("Updated config.yml from version <1.1, check your world settings in config.yml!");
 		}
-		
+
 		//--- writefile section
 		try {
 			cOut = new FileOutputStream(cFile);
@@ -289,34 +289,34 @@ public class CraftBall extends JavaPlugin implements CommandExecutor {
 			log_warning("Error, couldn't update/save config.yml:"+e.toString());
 			return false;
 		}
-		
+
 		getConfig();
 		return true;
 	}
-	
-	
+
+
 	public void sendMess(String msg, CommandSender sender) {
 		sender.sendMessage(TAG+ " " + msg);
 	}
-	
+
 	public void log_info(String msg) {
 		mclog.info(TAG + " " + msg);
 	}
-	
+
 
 	public void log_warning(String msg) {
 		mclog.warning(TAG + " " + msg);
 	}
-	
+
 
 	public void log_debug(String msg) {
 		if (DEBUG) {mclog.info(TAG + " DEBUG: " + msg);}
 	}
 
 	public void fatal(String msg) {
-    	mclog.severe(TAG + " " + msg);
-    	this.getServer().getPluginManager().disablePlugin(this);
+		mclog.severe(TAG + " " + msg);
+		this.getServer().getPluginManager().disablePlugin(this);
 	}
-	
+
 
 }

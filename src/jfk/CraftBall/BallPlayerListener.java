@@ -1,4 +1,4 @@
- /* 
+ /*
 
  * Copyright 2012 by JFK - whydontyouspamme@hotmail.com
  * Original Code by: nisovin
@@ -30,12 +30,12 @@ import org.bukkit.util.Vector;
 public class BallPlayerListener implements Listener {
 
 	CraftBall plugin;
-	
+
 	public BallPlayerListener(CraftBall plugin) {
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	
+
 	@EventHandler
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		Item item = event.getItem();
@@ -46,7 +46,7 @@ public class BallPlayerListener implements Listener {
 				Vector v = item.getLocation().toVector().subtract(player.getLocation().toVector()).normalize().multiply(field.hKickPower);
 				v.setY(field.vKickPower);
 				item.setVelocity(v);
-				if (field.fire) { 
+				if (field.fire) {
 					item.setFireTicks(6000);
 				}
 				event.setCancelled(true);
@@ -54,7 +54,7 @@ public class BallPlayerListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		Item item = event.getItemDrop();
@@ -63,7 +63,7 @@ public class BallPlayerListener implements Listener {
 				plugin.log_debug("Player "+event.getPlayer().getName()+" threw trow-able item in field");
 				item.setPickupDelay(field.pickupDelay);
 				item.setVelocity(event.getPlayer().getLocation().getDirection().normalize().multiply(field.throwPower));
-				if (field.fire) { 
+				if (field.fire) {
 					item.setFireTicks(6000);
 				}
 				return;
