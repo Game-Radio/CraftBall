@@ -1,7 +1,7 @@
-name: CraftBall & Xefir Destiny
+name: CraftBall
 main: jfk.CraftBall.CraftBall
 version: 1.2
-authors: [nisovin, JFK]
+authors: [nisovin, JFK, Xefir Destiny]
 softdepend: [MultiVerse-Core]
 
 commands:
